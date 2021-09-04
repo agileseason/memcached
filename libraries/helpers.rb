@@ -59,12 +59,12 @@ module Memcached
       options = "-m #{new_resource.memory} -u #{new_resource.user} -c #{new_resource.maxconn} \
 -I #{new_resource.max_object_size}"
       # If sockets are used, ports are disabled by default
-      if new_resource.socket.empty?
+      if new_resource.respond_to?(:socket) && new_resource.socket.empty?
         options << " -U #{new_resource.udp_port} -p #{new_resource.port} -l #{new_resource.listen}"
       end
 
-      options << " -s #{new_resource.socket}" unless new_resource.socket.empty?
-      options << " -a #{new_resource.socket_mode}" unless new_resource.socket_mode.empty?
+      options << " -s #{new_resource.socket}" if new_resource.respond_to?(:socket) && new_resource.socket.present?
+      options << " -a #{new_resource.socket_mode}" if new_resource.respond_to?(:socket) && new_resource.socket_mode.present?
       options << " -o #{new_resource.experimental_options.join(',')}" unless new_resource.experimental_options.empty?
 
       log_arg = ''
